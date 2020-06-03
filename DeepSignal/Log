@@ -1,0 +1,117 @@
+Deepsignal > Lisa
+Conda environment deepenv
+
+CODE
+# create
+$conda create -n deepenv python=3.6
+# activate
+$conda activate deepenv
+
+
+$git clone https://github.com/bioinfomaticsCSU/deepsignal.git
+$cd deepsignal
+$python setup.py install
+# install using conda
+$conda install -c bioconda ont-tombo
+# install using conda
+$conda install -c anaconda tensorflow==1.13.1
+
+Download voorbeeld data van https://drive.google.com/drive/folders/1zkK8Q1gyfviWWnXUBMcIwEDw3SocJg7P
+
+$ tar -xvf model.CpG.R9.4_1D.human_hx1.bn17.sn360.v0.1.7+.tar.gz
+$tar -xvf fast5s.sample.tar.gz
+
+
+$tombo resquiggle fast5s.al GCF_000146045.2_R64_genomic.fna --processes 10 --corrected-group RawGenomeCorrected_001 --basecall-group Basecall_1D_000 –-overwrite
+
+
+$deepsignal extract --fast5_dir fast5s.al/ --reference_path GCF_000146045.2_R64_genomic.fna --write_path fast5s.al.CpG.signal_features.17bases.rawsignals_360.tsv --corrected_group RawGenomeCorrected_001 --nproc 10
+
+
+deepsignal call_mods --input_path fast5s.al/ --model_path model.CpG.R9.4_1D.human_hx1.bn17.sn360.v0.1.7+/bn_17.sn_360.epoch_9.ckpt --result_file fast5s.al.CpG.call_mods.tsv --reference_path GCF_000146045.2_R64_genomic.fna --corrected_group RawGenomeCorrected_001 --nproc 10 --is_gpu no
+
+ERROR
+TENSORFLOW NOT GOOD 
+CREATING NEW ENVIRONMENT
+ 
+$conda create -n deepsignal2 python=3.6
+$conda activate deepsignal2
+
+$conda install -c bioconda ont-tombo
+$conda install -c anaconda tensorflow==1.13.1
+
+
+$mdkir deepsignal2
+$cd deepsignal2
+
+$git clone https://github.com/bioinfomaticsCSU/deepsignal.git
+$cd deepsignal
+$python setup.py install
+
+
+>>COPIED FILES FROM OTHER DIRECTORY TO deepsignal2
+
+$tombo resquiggle fast5s.al GCF_000146045.2_R64_genomic.fna --processes 10 --corrected-group RawGenomeCorrected_001 --basecall-group Basecall_1D_000 –-overwrite
+
+
+$deepsignal extract --fast5_dir fast5s.al/ --reference_path GCF_000146045.2_R64_genomic.fna --write_path fast5s.al.CpG.signal_features.17bases.rawsignals_360.tsv --corrected_group RawGenomeCorrected_001 --nproc 10
+
+
+$deepsignal call_mods --input_path fast5s.al/ --model_path model.CpG.R9.4_1D.human_hx1.bn17.sn360.v0.1.7+/bn_17.sn_360.epoch_9.ckpt --result_file fast5s.al.CpG.call_mods.tsv --reference_path GCF_000146045.2_R64_genomic.fna --corrected_group RawGenomeCorrected_001 --nproc 10 --is_gpu no
+
+OR
+
+$deepsignal call_mods --input_path fast5s.al.CpG.signal_features.17bases.rawsignals_360.tsv --model_path model.CpG.R9.4_1D.human_hx1.bn17.sn360.v0.1.7+/bn_17.sn_360.epoch_9.ckpt --result_file fast5s.al.CpG.call_mods.tsv --nproc 10 --is_gpu no
+
+
+7x herhaalt op 3 verschillende dagen. Elke keer een bestand met andere grootte.  
+Deepsignal with nanopolish example data
+
+(tombo preprocess annotate_raw_with_fastqs --fast5-basedir fast5_files_nano --fastq-filenames albacore_output.fastq)
+
+Werkt niet, blijft hangen. Zonder preprocess is resquiggle niet mogelijk. 
+
+tombo resquiggle fast5_files_nano reference.fasta --processes 10 --corrected-group RawGenomeCorrected_001 --basecall-group albacore_output.fastq --overwrite
+Resquiggle via galaxy 
+Fast 5 files via galaxy Tombo Re-squiggle voorbewerken. Ook reference file en basecall file nodig. 
+Daarna data downloaden en weer uploaden unzippen
+$tombo preprocess annotate_raw_with_fastqs --fast5-basedir fast5_files_nano_squi --fastq-filenames albacore_output.fastq
+
+$tombo resquiggle fast5_files_nano_squi reference.fasta --processes 10 --corrected-group RawGenomeCorrected_001 --overwrite
+
+
+$deepsignal extract --fast5_dir fast5_files_nano_squi/ --reference_path reference.fasta --write_path fast5s.al.CpG.signal_features.17bases.rawsignals_360nano3.tsv --corrected_group RawGenomeCorrected_001 --nproc 10
+
+$deepsignal call_mods --input_path fast5s.al.CpG.signal_features.17bases.rawsignals_360nano3.tsv --model_path model.CpG.R9.4_1D.human_hx1.bn17.sn360.v0.1.7+/bn_17.sn_360.epoch_9.ckpt --result_file fast5s.al.CpG.call_modsnano.tsv --nproc 10 --is_gpu no
+
+ OR
+deepsignal call_mods --input_path fast_files_nano_squi/ --model_path model.CpG.R9.4_1D.human_hx1.bn17.sn360.v0.1.7+/bn_17.sn_360.epoch_9.ckpt --result_file fast5s.al.CpG.call_modsnano1.tsv --reference_path reference.fasta--corrected_group RawGenomeCorrected_001 --nproc 10 --is_gpu no
+ 
+
+Deepsignal with Data from github
+FAB42804	84744914	FASTQ/FAST5
+16,688	91,150,705
+FAST5 files omzetten naar single fast5 files
+multi_to_single_fast5 --input_path /home/atgm2004/project/deepsignal2/deepsignal/Bham/FAB42804-84744914_Multi --save_path /home/atgm2004/project/deepsignal2/deepsignal/Bham/single_reads --recursive
+
+tombo resquiggle fast5_files_test reference.fasta --processes 10 --corrected-group RawGenomeCorrected_001 --basecall-group Basecall_1D_000 --overwrite
+deepsignal extract --fast5_dir fast5_files_test/ --reference_path reference.fasta --write_path fast5s.al.CpG.signal_features.17bases.rawsignals_360test.tsv --corrected_group RawGenomeCorrected_001 --nproc 10
+
+
+deepsignal call_mods --input_path fast5s.al.CpG.signal_features.17bases.rawsignals_360test.tsv --model_path model.CpG.R9.4_1D.human_hx1.bn17.sn360.v0.1.7+/bn_17.sn_360.epoch_9.ckpt --result_file fast5s.al.CpG.call_modstest.tsv --nproc 10 --is_gpu no
+
+OR 
+deepsignal call_mods --input_path fast_files_test/ --model_path model.CpG.R9.4_1D.human_hx1.bn17.sn360.v0.1.7+/bn_17.sn_360.epoch_9.ckpt --result_file fast5s.al.CpG.call_modstest.tsv --reference_path reference.fasta--corrected_group RawGenomeCorrected_001 --nproc 10 --is_gpu no
+ 
+Nanopolish with fast5 chromosome 1 data
+
+Conda create -n albacore python=3.5
+Conda activate albacore
+HTTP request sent, awaiting response... 403 Forbidden
+2020-05-29 10:31:28 ERROR 403: Forbidden.
+KAN NIET
+
+Conda create -n basecaller
+Conda activate basecaller
+conda install -c bioconda nanocall\
+WERKT NIET
