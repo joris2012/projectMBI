@@ -1,0 +1,32 @@
+Nanopolish
+Creating and activating nanopolish environment
+$conda create -n nanopolish
+$conda activate nanopolish
+$conda install -c bioconda nanopolish
+$cd project/nanopolish
+
+Getting example data
+$wget http://s3.climb.ac.uk/nanopolish_tutorial/methylation_example.tar.gz
+$tar -xvf methylation_example.tar.gz
+$cd /project/nanopolish/methylation_example
+
+Data preprocessing
+$nanopolish index -d fast5_files/ albacore_output.fastq
+
+Aligning reads to the reference genome
+$minimap2 -a -x map-ont reference.fasta albacore_output.fastq 
+$samtools sort minimap.out -o output.sorted.bam
+$samtools index output.sorted.bam
+
+Calling methylation
+$nanopolish call-methylation -t 8 -r albacore_output.fastq -b output.sorted.bam -g reference.fasta -w "chr20:5,000,000-10,000,000" > methylation_calls.tsv
+
+Creating files for comparison with bisulfite data
+$python methylation_frequency.py methylation_calls.tsv > methylation_frequency.tsv
+$python3 compare_methylation.py bisulfite.ENCFF835NTC.example.tsv methylation_frequency.tsv > bisulfite_vs_nanopolish.tsv
+
+File naar galaxy, gebruik programma r studio.
+1 = 6 tot 10 million bp
+2 = 10000 tot 60 million bp
+3 = 4 tot 10 million bp
+4 = 10 tot 64 million bp
