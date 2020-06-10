@@ -1,0 +1,18 @@
+
+# Create virtual environment:
+
+source activate mdeepmod
+
+# Installing tools necassary
+
+conda install -c anaconda h5py hdf5 numpy scipy scikit-learn
+conda install -c bioconda minimap2 bwa samtools
+conda install -c r rpy2 r-ggplot2 r-gridextra r-plyr r-rcolorbrewer
+
+#checking installation TensorFlow
+conda install -c conda-forge tensorflow matplotlib
+
+#Installing git DeepMod
+git clone https://github.com/WGLab/DeepMod
+
+used: https://github.com/WGLab/DeepMod/blob/master/docs/Usage.md
